@@ -1,12 +1,25 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SignIn, SignUp } from "@clerk/clerk-react";
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { useAuthGuard } from '@/hooks/use-auth-guard';
 
 const Auth = () => {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const navigate = useNavigate();
+  
+  // Use auth guard to redirect if already signed in
+  useAuthGuard(false);
+  
+  // Handle URL hash for signup/signin switching
+  useEffect(() => {
+    if (window.location.hash === '#signup') {
+      setMode('signup');
+    } else if (window.location.hash === '#signin') {
+      setMode('signin');
+    }
+  }, []);
   
   return (
     <div className="min-h-screen bg-prime-dark flex flex-col">
@@ -33,13 +46,19 @@ const Auth = () => {
           <div className="mb-6 flex justify-center border-b border-prime-gray/20">
             <button 
               className={`px-4 py-2 font-medium ${mode === 'signin' ? 'text-prime-blue border-b-2 border-prime-blue' : 'text-prime-gray'}`}
-              onClick={() => setMode('signin')}
+              onClick={() => {
+                setMode('signin');
+                window.location.hash = 'signin';
+              }}
             >
               Sign In
             </button>
             <button 
               className={`px-4 py-2 font-medium ${mode === 'signup' ? 'text-prime-blue border-b-2 border-prime-blue' : 'text-prime-gray'}`}
-              onClick={() => setMode('signup')}
+              onClick={() => {
+                setMode('signup');
+                window.location.hash = 'signup';
+              }}
             >
               Create Account
             </button>

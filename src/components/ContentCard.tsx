@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { Play, Plus, Star, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { handleImageLoad } from '@/utils/animations';
 import { toast } from '@/components/ui/use-toast';
 import { useUser } from '@clerk/clerk-react';
 
@@ -24,6 +23,7 @@ const ContentCard = ({
   index = 0 
 }: ContentCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const { isSignedIn } = useUser();
   
   const handlePlay = () => {
@@ -63,11 +63,16 @@ const ContentCard = ({
       )}>
         {/* Image */}
         <div className="relative aspect-[2/3] bg-prime-accent/50">
+          {!imageLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-prime-accent/50">
+              <div className="w-8 h-8 border-2 border-prime-blue border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
           <img 
             src={image} 
             alt={title} 
-            className="lazy-load w-full h-full object-cover"
-            onLoad={handleImageLoad}
+            className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            onLoad={() => setImageLoaded(true)}
           />
           
           {/* Info Overlay (visible on hover) */}

@@ -40,7 +40,7 @@ const AuthButton = () => {
   return (
     <button
       onClick={() => navigate('/auth')}
-      className="flex items-center space-x-2 text-prime-light hover:text-prime-blue transition-colors"
+      className="flex items-center space-x-2 bg-prime-blue hover:bg-prime-blue/90 text-white px-3 py-2 rounded-md transition-colors"
     >
       <User className="w-5 h-5" />
       <span className="hidden md:inline">Sign In</span>

@@ -58,13 +58,15 @@ const HeroSection = ({
           </div>
         ) : (
           <>
-            <img 
-              src={image} 
-              alt={title}
-              className={`lazy-load ${isLoaded ? 'loaded' : ''} w-full h-full object-cover object-center transition-transform duration-10000 ease-out transform scale-105`}
-              style={{ transform: `scale(${isLoaded ? 1.05 : 1.1})` }}
-              onLoad={handleImageLoad}
-            />
+            <div className="w-full h-full bg-prime-accent/30">
+              <img 
+                src={image} 
+                alt={title}
+                className={`w-full h-full object-cover object-center transition-transform duration-10000 ease-out transform ${isLoaded ? 'opacity-100 scale-105' : 'opacity-0 scale-110'}`}
+                style={{ transition: 'opacity 0.5s, transform 10s' }}
+                onLoad={() => setIsLoaded(true)}
+              />
+            </div>
             <div className="absolute inset-0 hero-gradient"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-prime-dark/80 via-prime-dark/40 to-transparent"></div>
           </>
