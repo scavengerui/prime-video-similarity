@@ -10,7 +10,7 @@ import "./index.css";
 const queryClient = new QueryClient();
 
 // Get the Clerk publishable key
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const PUBLISHABLE_KEY = "pk_test_Z3JlYXQtY29uZG9yLTk4LmNsZXJrLmFjY291bnRzLmRldiQ";
 
 if (!PUBLISHABLE_KEY) {
   console.warn("Missing Clerk Publishable Key - Authentication will not work properly");
@@ -18,7 +18,7 @@ if (!PUBLISHABLE_KEY) {
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY || "pk_test_placeholder"}>
+    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <App />
