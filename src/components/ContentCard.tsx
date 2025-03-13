@@ -1,8 +1,10 @@
 
 import { useState } from 'react';
-import { Play, Plus, Star } from 'lucide-react';
+import { Play, Plus, Star, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { handleImageLoad } from '@/utils/animations';
+import { toast } from '@/components/ui/use-toast';
+import { useUser } from '@clerk/clerk-react';
 
 interface ContentCardProps {
   title: string;
@@ -22,10 +24,35 @@ const ContentCard = ({
   index = 0 
 }: ContentCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const { isSignedIn } = useUser();
+  
+  const handlePlay = () => {
+    toast({
+      title: "Starting playback",
+      description: `Now playing: ${title}`,
+      duration: 3000
+    });
+  };
+
+  const handleAddToWatchlist = () => {
+    if (!isSignedIn) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to add items to your watchlist",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    toast({
+      title: "Added to watchlist",
+      description: `${title} has been added to your watchlist`,
+    });
+  };
   
   return (
     <div 
-      className="snap-start shrink-0 w-[180px] md:w-[220px] transition-all duration-500 ease-out transform"
+      className="snap-start shrink-0 w-[180px] md:w-[220px] transition-all duration-500 ease-out transform content-card"
       style={{ animationDelay: `${index * 0.1}s` }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -74,11 +101,20 @@ const ContentCard = ({
               <p className="text-white text-sm font-medium mb-3 line-clamp-1">{title}</p>
               
               <div className="flex space-x-2">
-                <button className="flex items-center justify-center bg-prime-blue text-white p-2 rounded-full transition-all duration-200 hover:bg-prime-blue/90">
+                <button 
+                  className="flex items-center justify-center bg-prime-blue text-white p-2 rounded-full transition-all duration-200 hover:bg-prime-blue/90"
+                  onClick={handlePlay}
+                >
                   <Play className="w-4 h-4" />
                 </button>
-                <button className="flex items-center justify-center bg-prime-gray/40 text-white p-2 rounded-full transition-all duration-200 hover:bg-prime-gray/60">
+                <button 
+                  className="flex items-center justify-center bg-prime-gray/40 text-white p-2 rounded-full transition-all duration-200 hover:bg-prime-gray/60"
+                  onClick={handleAddToWatchlist}
+                >
                   <Plus className="w-4 h-4" />
+                </button>
+                <button className="flex items-center justify-center bg-prime-gray/40 text-white p-2 rounded-full transition-all duration-200 hover:bg-prime-gray/60">
+                  <Info className="w-4 h-4" />
                 </button>
               </div>
             </div>

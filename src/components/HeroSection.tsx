@@ -10,6 +10,8 @@ interface HeroSectionProps {
   rating?: string;
   year?: string;
   duration?: string;
+  onPlay?: () => void;
+  onAddToWatchlist?: () => void;
 }
 
 const HeroSection = ({ 
@@ -18,9 +20,12 @@ const HeroSection = ({
   image, 
   rating = "16+", 
   year = "2023", 
-  duration = "2h 15m" 
+  duration = "2h 15m",
+  onPlay,
+  onAddToWatchlist
 }: HeroSectionProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -30,19 +35,40 @@ const HeroSection = ({
     return () => clearTimeout(timeoutId);
   }, []);
 
+  const handlePlayClick = () => {
+    setIsVideoPlaying(true);
+    if (onPlay) onPlay();
+    
+    // Reset after 10 seconds
+    setTimeout(() => {
+      setIsVideoPlaying(false);
+    }, 10000);
+  };
+
   return (
     <section className="relative w-full h-[75vh] md:h-[85vh] overflow-hidden">
       {/* Background Image with Parallax Effect */}
       <div className="absolute inset-0 w-full h-full">
-        <img 
-          src={image} 
-          alt={title}
-          className={`lazy-load ${isLoaded ? 'loaded' : ''} w-full h-full object-cover object-center transition-transform duration-10000 ease-out transform scale-105`}
-          style={{ transform: `scale(${isLoaded ? 1.05 : 1.1})` }}
-          onLoad={handleImageLoad}
-        />
-        <div className="absolute inset-0 hero-gradient"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-prime-dark/80 via-prime-dark/40 to-transparent"></div>
+        {isVideoPlaying ? (
+          <div className="absolute inset-0 bg-black flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-prime-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-white text-lg">Playing {title}...</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <img 
+              src={image} 
+              alt={title}
+              className={`lazy-load ${isLoaded ? 'loaded' : ''} w-full h-full object-cover object-center transition-transform duration-10000 ease-out transform scale-105`}
+              style={{ transform: `scale(${isLoaded ? 1.05 : 1.1})` }}
+              onLoad={handleImageLoad}
+            />
+            <div className="absolute inset-0 hero-gradient"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-prime-dark/80 via-prime-dark/40 to-transparent"></div>
+          </>
+        )}
       </div>
       
       {/* Content */}
@@ -69,11 +95,17 @@ const HeroSection = ({
           </p>
           
           <div className="flex flex-wrap gap-4">
-            <button className="flex items-center justify-center bg-prime-blue hover:bg-prime-blue/90 text-white font-medium px-6 py-3 rounded-full transition-all duration-300 transform hover:scale-105">
+            <button 
+              className="flex items-center justify-center bg-prime-blue hover:bg-prime-blue/90 text-white font-medium px-6 py-3 rounded-full transition-all duration-300 transform hover:scale-105"
+              onClick={handlePlayClick}
+            >
               <Play className="w-5 h-5 mr-2" />
               Play
             </button>
-            <button className="flex items-center justify-center bg-prime-gray/30 hover:bg-prime-gray/40 text-white font-medium px-6 py-3 rounded-full transition-all duration-300 backdrop-blur-sm">
+            <button 
+              className="flex items-center justify-center bg-prime-gray/30 hover:bg-prime-gray/40 text-white font-medium px-6 py-3 rounded-full transition-all duration-300 backdrop-blur-sm"
+              onClick={onAddToWatchlist}
+            >
               <Plus className="w-5 h-5 mr-2" />
               Watchlist
             </button>
