@@ -8,19 +8,19 @@ import { useAuthGuard } from '@/hooks/use-auth-guard';
 import { useUser } from '@clerk/clerk-react';
 import { toast } from '@/components/ui/use-toast';
 
-// Updated content with working images
+// Updated content with better images
 const featuredContent = {
   title: "The Lord of the Rings: The Rings of Power",
   description: "Beginning in a time of relative peace, the series follows an ensemble cast of characters as they confront the re-emergence of evil in Middle-earth. From the darkest depths of the Misty Mountains, to the majestic forests of the elf-capital of Lindon, to the island kingdom of Númenor, these kingdoms and characters will carve out legacies that live on long after they are gone.",
-  image: "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1887&auto=format&fit=crop",
+  image: "https://images.unsplash.com/photo-1515634928627-2a4e0dae3ddf?w=1800&auto=format", // Fantasy-themed image
   rating: "16+",
   year: "2022",
   duration: "1 Season"
 };
 
 const trendingMovies = [
-  { id: 1, title: "The Tomorrow War", image: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=500&auto=format", rating: 7.2, isPrime: true },
-  { id: 2, title: "Without Remorse", image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&auto=format", rating: 6.8, isPrime: true },
+  { id: 1, title: "The Tomorrow War", image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&auto=format", rating: 7.2, isPrime: true },
+  { id: 2, title: "Without Remorse", image: "https://images.unsplash.com/photo-1568111561564-aa1c5466d6ed?w=500&auto=format", rating: 6.8, isPrime: true },
   { id: 3, title: "Sound of Metal", image: "https://images.unsplash.com/photo-1581905764498-f1b60bae941a?w=500&auto=format", rating: 8.1, isPrime: true },
   { id: 4, title: "Coming 2 America", image: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=500&auto=format", rating: 6.2, isPrime: true, isNew: true },
   { id: 5, title: "Borat Subsequent Moviefilm", image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=500&auto=format", rating: 7.4, isPrime: true },
@@ -82,9 +82,28 @@ const Index = () => {
       });
       setHasWelcomed(true);
     }
+    
+    // Show sign-in toast if not signed in
+    if (!isSignedIn && !hasWelcomed) {
+      setTimeout(() => {
+        toast({
+          title: "Sign in for the full experience",
+          description: "Sign in to track your watchlist and get personalized recommendations",
+          duration: 5000,
+          action: {
+            label: "Sign In",
+            onClick: () => window.location.href = '/auth'
+          }
+        });
+        setHasWelcomed(true);
+      }, 2000);
+    }
   }, [isSignedIn, user, hasWelcomed]);
 
   const handlePlayClick = () => {
+    // Open a sample video in a new tab
+    window.open("https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/sample-mp4-file.mp4", "_blank");
+    
     toast({
       title: "Starting playback",
       description: `Now playing: ${featuredContent.title}`,
@@ -97,7 +116,11 @@ const Index = () => {
       toast({
         title: "Sign in required",
         description: "Please sign in to add items to your watchlist",
-        variant: "destructive"
+        variant: "destructive",
+        action: {
+          label: "Sign In",
+          onClick: () => window.location.href = '/auth'
+        }
       });
       return;
     }

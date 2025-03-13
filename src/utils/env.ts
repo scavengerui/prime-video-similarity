@@ -1,8 +1,12 @@
 
-// This file centralizes environment variable management
-
-// Clerk authentication keys
+// Clerk publishable key
 export const CLERK_PUBLISHABLE_KEY = "pk_test_Z3JlYXQtY29uZG9yLTk4LmNsZXJrLmFjY291bnRzLmRldiQ";
 
-// Note: The Clerk Secret Key should NEVER be exposed in the frontend code
-// It should only be used in secure backend environments
+// Function to ensure environment variables are set
+export function checkEnvVariables() {
+  if (!CLERK_PUBLISHABLE_KEY) {
+    console.warn("Missing CLERK_PUBLISHABLE_KEY - Authentication will not work properly");
+    return false;
+  }
+  return true;
+}

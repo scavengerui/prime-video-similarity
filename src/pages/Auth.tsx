@@ -34,13 +34,16 @@ const Auth = () => {
       </div>
       
       <div className="flex-1 flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-lg bg-[#1A242F] p-6 shadow-xl">
+        <div className="w-full max-w-md rounded-lg bg-[#1A242F] p-6 shadow-xl border border-prime-blue/30">
           <div className="mb-8">
             <img 
               src="https://m.media-amazon.com/images/G/01/digital/video/acquisition/amazon_video_light.png" 
               alt="Prime Video" 
               className="h-12 mx-auto"
             />
+            <p className="text-center text-prime-gray mt-4">
+              Sign in to access your watchlist, personalized recommendations, and more
+            </p>
           </div>
           
           <div className="mb-6 flex justify-center border-b border-prime-gray/20">

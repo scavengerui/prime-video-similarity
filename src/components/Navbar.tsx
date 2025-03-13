@@ -1,13 +1,18 @@
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, User, Menu, ChevronDown } from 'lucide-react';
+import { useLocation, Link } from 'react-router-dom';
+import { Search, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import AuthButton from './AuthButton';
+import { useMobile } from '@/hooks/use-mobile';
 
 const Navbar = () => {
+  const location = useLocation();
+  const isMobile = useMobile();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -16,95 +21,112 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
+  
+  useEffect(() => {
+    // Close mobile menu when route changes
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+  
   return (
-    <header
-      className={cn(
-        'fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300',
-        isScrolled ? 'bg-prime-dark/95 shadow-md backdrop-blur-sm' : 'bg-gradient-to-b from-prime-dark/90 to-transparent'
-      )}
-    >
-      <div className="prime-container py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-6">
-          <Link 
-            to="/" 
-            className="text-prime-blue font-bold text-2xl tracking-tight transition-all duration-300 hover:opacity-80"
-          >
-            prime<span className="text-prime-light">video</span>
+    <nav className={cn(
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+      isScrolled ? "bg-prime-dark/95 backdrop-blur-sm shadow-lg" : "bg-gradient-to-b from-prime-dark to-transparent"
+    )}>
+      <div className="prime-container flex items-center justify-between h-16 md:h-20">
+        {/* Logo */}
+        <Link to="/" className="flex-shrink-0">
+          <img 
+            src="https://m.media-amazon.com/images/G/01/digital/video/acquisition/amazon_video_light.png"
+            alt="Prime Video" 
+            className="h-6 md:h-8" 
+          />
+        </Link>
+        
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-6">
+          <Link to="/" className={`text-prime-light hover:text-white transition-colors ${location.pathname === '/' ? 'font-medium' : ''}`}>
+            Home
           </Link>
-          
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="nav-link font-medium">Home</Link>
-            <div className="relative group">
-              <button className="nav-link font-medium flex items-center">
-                Movies
-                <ChevronDown className="ml-1 w-4 h-4 transition-transform group-hover:rotate-180" />
-              </button>
-              <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-prime-accent border border-prime-gray/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left">
-                <div className="py-2 px-4 space-y-2">
-                  <Link to="/" className="block text-prime-light hover:text-prime-blue transition-colors">Popular</Link>
-                  <Link to="/" className="block text-prime-light hover:text-prime-blue transition-colors">New Releases</Link>
-                  <Link to="/" className="block text-prime-light hover:text-prime-blue transition-colors">Categories</Link>
-                </div>
-              </div>
-            </div>
-            <div className="relative group">
-              <button className="nav-link font-medium flex items-center">
-                TV Shows
-                <ChevronDown className="ml-1 w-4 h-4 transition-transform group-hover:rotate-180" />
-              </button>
-              <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-prime-accent border border-prime-gray/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-left">
-                <div className="py-2 px-4 space-y-2">
-                  <Link to="/" className="block text-prime-light hover:text-prime-blue transition-colors">Popular</Link>
-                  <Link to="/" className="block text-prime-light hover:text-prime-blue transition-colors">New Episodes</Link>
-                  <Link to="/" className="block text-prime-light hover:text-prime-blue transition-colors">Categories</Link>
-                </div>
-              </div>
-            </div>
-            <Link to="/" className="nav-link font-medium">Originals</Link>
-          </nav>
+          <Link to="/tvshows" className={`text-prime-light hover:text-white transition-colors ${location.pathname === '/tvshows' ? 'font-medium' : ''}`}>
+            TV Shows
+          </Link>
+          <Link to="/movies" className={`text-prime-light hover:text-white transition-colors ${location.pathname === '/movies' ? 'font-medium' : ''}`}>
+            Movies
+          </Link>
+          <Link to="/originals" className={`text-prime-light hover:text-white transition-colors ${location.pathname === '/originals' ? 'font-medium' : ''}`}>
+            Originals
+          </Link>
         </div>
-
+        
+        {/* Right section: Search & Auth */}
         <div className="flex items-center space-x-4">
-          <button className="hidden md:flex items-center justify-center w-10 h-10 rounded-full hover:bg-prime-accent transition-colors duration-200">
-            <Search className="w-5 h-5 text-prime-light" />
-          </button>
+          {/* Search */}
+          <div className="relative">
+            {searchOpen ? (
+              <div className="flex items-center bg-prime-dark/80 backdrop-blur-sm rounded-full overflow-hidden border border-gray-700 pl-3 pr-1 py-1">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="bg-transparent text-white text-sm w-36 md:w-40 lg:w-48 focus:outline-none"
+                  autoFocus
+                />
+                <button 
+                  className="ml-1 p-1 text-prime-gray rounded-full hover:bg-prime-gray/20 transition-colors"
+                  onClick={() => setSearchOpen(false)}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <button 
+                className="text-prime-light hover:text-white transition-colors p-2"
+                onClick={() => setSearchOpen(true)}
+              >
+                <Search className="w-5 h-5" />
+              </button>
+            )}
+          </div>
           
-          <button className="hidden md:flex items-center justify-center w-10 h-10 rounded-full hover:bg-prime-accent transition-colors duration-200">
-            <User className="w-5 h-5 text-prime-light" />
-          </button>
+          {/* Auth Button */}
+          <AuthButton />
           
+          {/* Mobile Menu Toggle */}
           <button 
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded-full hover:bg-prime-accent transition-colors duration-200"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden text-prime-light hover:text-white transition-colors"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <Menu className="w-5 h-5 text-prime-light" />
+            {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
       
       {/* Mobile Menu */}
       <div className={cn(
-        "fixed inset-0 bg-prime-dark z-40 transition-transform duration-300 transform md:hidden",
-        isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        "md:hidden fixed inset-0 bg-prime-dark/95 backdrop-blur-lg transition-all duration-300 flex flex-col pt-20 px-6",
+        isMenuOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 pointer-events-none"
       )}>
-        <div className="pt-20 px-6 space-y-6">
-          <Link to="/" className="block py-2 text-xl font-medium text-prime-light hover:text-prime-blue transition-colors">Home</Link>
-          <Link to="/" className="block py-2 text-xl font-medium text-prime-light hover:text-prime-blue transition-colors">Movies</Link>
-          <Link to="/" className="block py-2 text-xl font-medium text-prime-light hover:text-prime-blue transition-colors">TV Shows</Link>
-          <Link to="/" className="block py-2 text-xl font-medium text-prime-light hover:text-prime-blue transition-colors">Originals</Link>
-          
-          <div className="pt-4 flex space-x-4">
-            <button className="flex items-center justify-center w-12 h-12 rounded-full bg-prime-accent/50 hover:bg-prime-accent transition-colors duration-200">
-              <Search className="w-6 h-6 text-prime-light" />
-            </button>
-            <button className="flex items-center justify-center w-12 h-12 rounded-full bg-prime-accent/50 hover:bg-prime-accent transition-colors duration-200">
-              <User className="w-6 h-6 text-prime-light" />
-            </button>
+        <div className="flex flex-col space-y-6">
+          <Link to="/" className={`text-prime-light hover:text-white text-lg transition-colors ${location.pathname === '/' ? 'font-medium' : ''}`}>
+            Home
+          </Link>
+          <Link to="/tvshows" className={`text-prime-light hover:text-white text-lg transition-colors ${location.pathname === '/tvshows' ? 'font-medium' : ''}`}>
+            TV Shows
+          </Link>
+          <Link to="/movies" className={`text-prime-light hover:text-white text-lg transition-colors ${location.pathname === '/movies' ? 'font-medium' : ''}`}>
+            Movies
+          </Link>
+          <Link to="/originals" className={`text-prime-light hover:text-white text-lg transition-colors ${location.pathname === '/originals' ? 'font-medium' : ''}`}>
+            Originals
+          </Link>
+
+          <div className="pt-6 mt-6 border-t border-gray-800">
+            <Link to="/auth" className="flex items-center justify-center bg-prime-blue hover:bg-prime-blue/90 text-white px-6 py-3 rounded-md transition-colors w-full">
+              Sign In
+            </Link>
           </div>
         </div>
       </div>
-    </header>
+    </nav>
   );
 };
 

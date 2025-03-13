@@ -24,9 +24,19 @@ const ContentCard = ({
 }: ContentCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const { isSignedIn } = useUser();
   
+  // Fallback image if the main one fails to load
+  const fallbackImage = "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=500&auto=format";
+  
   const handlePlay = () => {
+    // Mock video URL - in a real app, this would be a proper video URL
+    const videoUrl = "https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/sample-mp4-file.mp4";
+    
+    // Open video in a lightbox or new window
+    window.open(videoUrl, '_blank');
+    
     toast({
       title: "Starting playback",
       description: `Now playing: ${title}`,
@@ -63,16 +73,21 @@ const ContentCard = ({
       )}>
         {/* Image */}
         <div className="relative aspect-[2/3] bg-prime-accent/50">
-          {!imageLoaded && (
+          {!imageLoaded && !imageError && (
             <div className="absolute inset-0 flex items-center justify-center bg-prime-accent/50">
               <div className="w-8 h-8 border-2 border-prime-blue border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
           <img 
-            src={image} 
+            src={imageError ? fallbackImage : image} 
             alt={title} 
             className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={() => setImageLoaded(true)}
+            onError={() => {
+              console.log(`Image failed to load: ${image}, using fallback`);
+              setImageError(true);
+              setImageLoaded(true);
+            }}
           />
           
           {/* Info Overlay (visible on hover) */}

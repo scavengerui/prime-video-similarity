@@ -11,9 +11,17 @@ const AuthButton = () => {
     return (
       <div className="relative group">
         <button className="flex items-center space-x-2 text-prime-light hover:text-prime-blue transition-colors">
-          <div className="w-8 h-8 rounded-full bg-prime-accent flex items-center justify-center overflow-hidden">
+          <div className="w-8 h-8 rounded-full bg-prime-accent flex items-center justify-center overflow-hidden border-2 border-prime-blue">
             {user.imageUrl ? (
-              <img src={user.imageUrl} alt={user.firstName || 'User'} className="w-full h-full object-cover" />
+              <img 
+                src={user.imageUrl} 
+                alt={user.firstName || 'User'} 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=70&auto=format'; // Fallback image
+                  console.log('Profile image failed to load, using fallback');
+                }}
+              />
             ) : (
               <User className="w-5 h-5" />
             )}
@@ -40,7 +48,7 @@ const AuthButton = () => {
   return (
     <button
       onClick={() => navigate('/auth')}
-      className="flex items-center space-x-2 bg-prime-blue hover:bg-prime-blue/90 text-white px-3 py-2 rounded-md transition-colors"
+      className="flex items-center space-x-2 bg-prime-blue hover:bg-prime-blue/90 text-white px-4 py-2 rounded-md transition-colors animate-pulse"
     >
       <User className="w-5 h-5" />
       <span className="hidden md:inline">Sign In</span>

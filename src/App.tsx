@@ -18,6 +18,9 @@ const App = () => (
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/movies" element={<Index />} /> {/* Placeholder for future development */}
+        <Route path="/tvshows" element={<Index />} /> {/* Placeholder for future development */}
+        <Route path="/originals" element={<Index />} /> {/* Placeholder for future development */}
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

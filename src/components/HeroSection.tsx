@@ -26,6 +26,10 @@ const HeroSection = ({
 }: HeroSectionProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  
+  // Fallback image if the main one fails to load
+  const fallbackImage = "https://images.unsplash.com/photo-1506466010722-395aa2bef877?w=1600&auto=format";
   
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -37,12 +41,16 @@ const HeroSection = ({
 
   const handlePlayClick = () => {
     setIsVideoPlaying(true);
+    
+    // Open a sample video in a new tab
+    window.open("https://jsoncompare.org/LearningContainer/SampleFiles/Video/MP4/sample-mp4-file.mp4", "_blank");
+    
     if (onPlay) onPlay();
     
-    // Reset after 10 seconds
+    // Reset after 3 seconds
     setTimeout(() => {
       setIsVideoPlaying(false);
-    }, 10000);
+    }, 3000);
   };
 
   return (
@@ -60,11 +68,16 @@ const HeroSection = ({
           <>
             <div className="w-full h-full bg-prime-accent/30">
               <img 
-                src={image} 
+                src={imageError ? fallbackImage : image} 
                 alt={title}
                 className={`w-full h-full object-cover object-center transition-transform duration-10000 ease-out transform ${isLoaded ? 'opacity-100 scale-105' : 'opacity-0 scale-110'}`}
                 style={{ transition: 'opacity 0.5s, transform 10s' }}
                 onLoad={() => setIsLoaded(true)}
+                onError={() => {
+                  console.log(`Hero image failed to load: ${image}, using fallback`);
+                  setImageError(true);
+                  setIsLoaded(true);
+                }}
               />
             </div>
             <div className="absolute inset-0 hero-gradient"></div>
