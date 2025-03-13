@@ -1,0 +1,100 @@
+
+import { useState } from 'react';
+import { Play, Plus, Star } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { handleImageLoad } from '@/utils/animations';
+
+interface ContentCardProps {
+  title: string;
+  image: string;
+  rating?: number;
+  isPrime?: boolean;
+  isNew?: boolean;
+  index?: number;
+}
+
+const ContentCard = ({ 
+  title, 
+  image, 
+  rating = 0, 
+  isPrime = false,
+  isNew = false,
+  index = 0 
+}: ContentCardProps) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  return (
+    <div 
+      className="snap-start shrink-0 w-[180px] md:w-[220px] transition-all duration-500 ease-out transform"
+      style={{ animationDelay: `${index * 0.1}s` }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className={cn(
+        "relative rounded-md overflow-hidden transition-all duration-300 transform",
+        isHovered ? "scale-105 shadow-xl z-10" : "scale-100"
+      )}>
+        {/* Image */}
+        <div className="relative aspect-[2/3] bg-prime-accent/50">
+          <img 
+            src={image} 
+            alt={title} 
+            className="lazy-load w-full h-full object-cover"
+            onLoad={handleImageLoad}
+          />
+          
+          {/* Info Overlay (visible on hover) */}
+          <div className={cn(
+            "absolute inset-0 content-gradient transition-opacity duration-300",
+            isHovered ? "opacity-100" : "opacity-0"
+          )}>
+            <div className="absolute bottom-0 left-0 right-0 p-3">
+              <div className="flex justify-between items-end mb-2">
+                <div>
+                  {isPrime && (
+                    <span className="inline-block bg-prime-blue/90 text-white text-xs font-medium px-2 py-1 rounded mb-2">
+                      Prime
+                    </span>
+                  )}
+                  {isNew && (
+                    <span className="inline-block bg-green-500/90 text-white text-xs font-medium px-2 py-1 rounded ml-2 mb-2">
+                      New
+                    </span>
+                  )}
+                </div>
+                
+                {rating > 0 && (
+                  <div className="flex items-center text-yellow-400 text-sm">
+                    <Star className="w-4 h-4 fill-current mr-1" />
+                    <span>{rating.toFixed(1)}</span>
+                  </div>
+                )}
+              </div>
+              
+              <p className="text-white text-sm font-medium mb-3 line-clamp-1">{title}</p>
+              
+              <div className="flex space-x-2">
+                <button className="flex items-center justify-center bg-prime-blue text-white p-2 rounded-full transition-all duration-200 hover:bg-prime-blue/90">
+                  <Play className="w-4 h-4" />
+                </button>
+                <button className="flex items-center justify-center bg-prime-gray/40 text-white p-2 rounded-full transition-all duration-200 hover:bg-prime-gray/60">
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Title (visible only when not hovered) */}
+      <div className={cn(
+        "mt-2 transition-opacity duration-300", 
+        isHovered ? "opacity-0" : "opacity-100"
+      )}>
+        <p className="text-sm text-prime-light line-clamp-1">{title}</p>
+      </div>
+    </div>
+  );
+};
+
+export default ContentCard;
